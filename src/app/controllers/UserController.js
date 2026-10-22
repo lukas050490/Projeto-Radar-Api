@@ -3,15 +3,17 @@
 // show => exibe um dado específico
 // update => atualiza dados
 // delete => remover dados
-// biome-ignore assist/source/organizeImports: <explanation>
 import User from '../models/users.js';
-import Company from '../models/Company.js';
-import { v4 } from 'uuid';
+import Company from '../models/companies.js';
 
 class UserController {
   async store(req, res) {
     try {
-      const { name, email, password_hash, admin, company_id } = req.body;
+      const { name, email, password, admin, company_id } = req.body;
+
+      if (!password) {
+        return res.status(400).json({ error: 'Senha não informada.' });
+      }
 
       // Verifica se empresa existe
       const company = await Company.findByPk(company_id);
@@ -28,7 +30,7 @@ class UserController {
       const user = await User.create({
         name,
         email,
-        password_hash,
+        password,
         admin,
         company_id,
       });
@@ -99,7 +101,7 @@ class UserController {
         return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
 
-      const { email, company_id } = req.body;
+      const { name, email, password, admin, company_id } = req.body;
 
       // E-mail duplicado
       if (email && email !== user.email) {
@@ -117,7 +119,7 @@ class UserController {
         }
       }
 
-      await user.update(req.body);
+      await user.update({ name, email, password, admin, company_id });
 
       return res.json({
         id: user.id,

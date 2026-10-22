@@ -1,5 +1,5 @@
-import Company from '../models/Company.js';
-import User from '../models/User.js';
+import Company from '../models/companies.js';
+import User from '../models/users.js';
 
 class CompanyController {
   // POST /companies
